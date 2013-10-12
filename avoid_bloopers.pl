@@ -17,12 +17,11 @@
 # If so, it prevents the message to be send to the channel and prints a notification to the user instead.
 # If you really want to send such a blocked message, just send it again (use the command history).
 # 
-# Alias-Support
-# -------------
-# So far, only the standard commands are detected when missing the slash.. Aliases as defined in the irssi
-# configuration are not recognized by the script. This feature might be added in the future...
-# 
-# You can add commands manually to the script by modifying the 'commands' array.
+# TODO
+# -----------
+# - handle aliases
+# - handling of two word commands needed?
+#
 
 use List::Util qw(min max);
 use strict;
@@ -40,35 +39,15 @@ our %IRSSI = (
     url         => 'https://github.com/worblehat/irssi-avoid-bloopers',
 );
 
-our @commands = (
-    'accept', 'die', 'knock', 'note', 'rping', 'unban',  
-    'action', 'disconnect',  'knockout', 'notice', 'save', 'unignore',  
-    'admin', 'echo', 'lastlog', 'notifiy', 'sconnect', 'unload',    
-    'alias', 'eval', 'layout', 'op', 'script', 'unnotify',  
-    'away', 'exec', 'links', 'oper', 'scrollback', 'unquery',
-    'ban', 'flushbuffer', 'list', 'part', 'server', 'unsilence',
-    'beep', 'foreach', 'load', 'ping', 'servlist', 'upgrade',
-    'bind', 'format', 'log', 'query', 'set', 'uping',
-    'cat', 'hash', 'lusers', 'quit', 'sethost', 'uptime',
-    'cd', 'help', 'map', 'quote', 'silence', 'userhost',
-    'channel', 'hilight', 'me', 'rawlog', 'squery', 'ver',
-    'clear', 'ignore', 'mircdcc',  'recode', 'squit', 'version',
-    'completion', 'info', 'mode', 'reconnect', 'stats', 'voice',     
-    'connect', 'invite', 'motd', 'redraw', 'statusbar',  'wait',      
-    'ctcp', 'ircnet', 'msg', 'rehash', 'time', 'wall',      
-    'cycle', 'ison', 'names', 'reload', 'toggle', 'wallops',
-    'dcc', 'join', 'nctcp', 'resize', 'topic', 'who', 
-    'dehilight', 'kick', 'netsplit', 'restart', 'trace', 'whois',
-    'deop', 'kickban', 'network', 'rmreconns', 'ts', 'whowas',
-    'devoice', 'kill', 'nick', 'rmrejoins', 'unalias', 'window'
-);
-
 # Get minimum and maximum length of commands
 our $max_len = 0;
 our $min_len = 512;  
+
+our @commands = (Irssi::commands());
 foreach my $cmd (@commands) {
-    $min_len = min($min_len, length($cmd));
-    $max_len = max($max_len, length($cmd));
+    my $keyword = $cmd->{cmd};
+    $min_len = min($min_len, length($keyword));
+    $max_len = max($max_len, length($keyword));
 }
 
 # Global variable that holds the last send text
@@ -95,7 +74,8 @@ sub send_text_handler {
         Irssi::signal_stop();
         return;
     }
-    foreach my $keyword (@commands) {
+    for my $cmd (Irssi::commands()) {
+        my $keyword = $cmd->{cmd};
         # Test for command with mistyped slash
         if(substr($word, 1) eq $keyword && substr($word, 0, 1) !~ m/\//) {
             Irssi::active_win()->print('%RBlocked message%n:'.$text);
