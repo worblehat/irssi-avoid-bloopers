@@ -2,6 +2,8 @@
 # ====================
 # 
 # A simple script for irssi to avoid sending misspelled commands as messages to a channel.
+#
+# The most current version can be found at https://github.com/worblehat/irssi-avoid-bloopers.
 # 
 # Explanation
 # -----------
