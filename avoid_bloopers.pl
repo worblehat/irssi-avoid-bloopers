@@ -19,8 +19,10 @@
 # 
 # TODO
 # -----------
+# - allow user defined cmdchars
 # - handle aliases
 # - handling of two word commands needed?
+# - only do processing when active window is channel or query
 #
 
 use List::Util qw(min max);
