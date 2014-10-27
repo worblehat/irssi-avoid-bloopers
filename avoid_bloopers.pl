@@ -62,6 +62,10 @@ sub send_text_handler {
     if($text eq $last) {
         return;
     }
+    # If text is an empty (or white-space-only) string, don't do anything
+    if($text =~ /^\s*$/) {
+        return;
+    }
     $last = $text;
     # First word of text in lower case
     my $word = lc((split(' ', $text))[0]);
