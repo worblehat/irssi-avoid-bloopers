@@ -34,7 +34,7 @@ use Irssi;
 our $VERSION = '1.0';
 our %IRSSI = (
     authors     => 'Tobias Marquardt',
-    contact     => 'tm@tobix.eu',
+    contact     => 'tmarq.contact@gmail.com',
     name        => 'avoid_bloopers',
     description => 'Avoid sending misspelled commands to a channel.',
     license     => 'GPLv3',
